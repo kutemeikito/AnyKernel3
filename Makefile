@@ -3,20 +3,20 @@ BRANCH := $(shell git -C .. rev-parse --abbrev-ref HEAD)
 
 ifeq ($(findstring 10,$(BRANCH)),10)
     ifeq ($(findstring ginkgo,$(DEVICE)),ginkgo)
-        NAME := RyzenKernel-Ginkgo-
+        NAME := RyzenKernel-AOSP-Ginkgo-
     else
-        NAME := RyzenKernel-Ginkgo-
+        NAME := RyzenKernel-AOSP-Ginkgo-
     endif
     DATE := $(shell date "+%Y%m%d")
     ZIP := $(NAME)-$(DATE).zip
 else
     ifeq ($(findstring whyred,$(DEVICE)),whyred)
-        NAME := RyzenKernel-Ginkgo
+        NAME := RyzenKernel-AOSP-Ginkgo
     else
     ifeq ($(findstring ginkgo,$(DEVICE)),ginkgo)
-        NAME := RyzenKernel-Ginkgo
+        NAME := RyzenKernel-AOSP-Ginkgo
     else
-        NAME := RyzenKernel-Ginkgo
+        NAME := RyzenKernel-AOSP-Ginkgo
     endif
     endif
     DATE := $(shell date "+%Y%m%d")
