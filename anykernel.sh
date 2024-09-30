@@ -15,7 +15,7 @@ device.name2=ginkgo
 device.name3=willow
 device.name4=
 device.name5=
-supported.versions=8 - 14
+supported.versions=8 - 15
 supported.patchlevels=
 supported.vendorpatchlevels=
 '; } # end properties
