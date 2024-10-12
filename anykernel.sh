@@ -85,8 +85,8 @@ if mountpoint -q /data; then
 fi
 
 
-flash_boot;
-flash_dtbo;
+# boot install
+dump_boot; # use split_boot to skip ramdisk unpack, e.g. for devices with init_boot ramdisk
 write_boot; # use flash_boot to skip ramdisk repack, e.g. for devices with init_boot ramdisk
 ## end boot install
 
