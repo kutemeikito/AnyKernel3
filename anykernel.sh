@@ -79,9 +79,6 @@ if mountpoint -q /data; then
   done
 fi
 
-## AnyKernel boot install
-split_boot;
-
 # Retrofit dynamic partitions
 if [ -d "/dev/block/mapper" ]; then
     blockdev --setrw /dev/block/mapper/system
@@ -93,9 +90,8 @@ else
     patch_cmdline "plain_partitions" "plain_partitions"
 fi
 
-# end ramdisk changes
-flash_boot;
-flash_dtbo;
+# boot install
+dump_boot; # use split_boot to skip ramdisk unpack, e.g. for devices with init_boot ramdisk
 write_boot; # use flash_boot to skip ramdisk repack, e.g. for devices with init_boot ramdisk
 ## end boot install
 
