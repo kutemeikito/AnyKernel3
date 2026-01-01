@@ -4,7 +4,7 @@
 ### AnyKernel setup
 # global properties
 properties() { '
-kernel.string=Ryzen Kernel [Retrofit Dynamic] by Ryuzenn @ telegram
+kernel.string=RyzenKernel-Reborn by Ryuzenn @ telegram
 do.devicecheck=1
 do.modules=1
 do.systemless=0
@@ -79,16 +79,35 @@ if mountpoint -q /data; then
   done
 fi
 
-# Retrofit dynamic partitions
-if [ -d "/dev/block/mapper" ]; then
-    blockdev --setrw /dev/block/mapper/system
-    blockdev --setrw /dev/block/mapper/vendor
-    	ui_print "Patching for dynamic partitions..."
-    patch_cmdline "plain_partitions" ""
-else
-	ui_print "Patching for plain partitions..."
-    patch_cmdline "plain_partitions" "plain_partitions"
+# Check if vendor isn't already mounted. This should make the detection work on flasher apps.
+do_patch=1;
+if [ ! -e /vendor/etc/fstab.qcom ]; then
+	if [ -e /dev/block/by-name/vendor ]; then
+		mount /dev/block/by-name/vendor /vendor
+		if [ $? -ne 0 ]; then
+			do_patch=0
+		fi
+	else
+		# If the block device for vendor isn't present at that location, it might mean this a dynamic partitions ROM.
+		mount /vendor
+		if [ $? -ne 0 ]; then
+			do_patch=0
+		fi
+	fi
 fi
+
+# Check for the presence of "first_stage_mount" in /vendor/etc/fstab only for /system or /vendor
+if [ $do_patch -eq 1 ]; then
+	if grep "first_stage_mount" /vendor/etc/fstab.qcom | grep -E -q '(/system|/vendor)'; then
+		ui_print "Two-stage init ROM detected, patching cmdline..."
+		patch_cmdline "tsinit" "tsinit"
+	else
+		ui_print "Legacy init ROM detected, no need to patch"
+	fi
+else
+	ui_print "Skipping cmdline patch because vendor could not be mounted!"
+fi
+
 
 # boot install
 dump_boot; # use split_boot to skip ramdisk unpack, e.g. for devices with init_boot ramdisk
